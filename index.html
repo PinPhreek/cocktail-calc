@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Dynamic Table Form</title>
+<style>
+  body { font-family: sans-serif; display: flex; justify-content: center; padding: 50px; }
+  table { border-collapse: collapse; }
+  td { padding: 5px; }
+  button { margin-top: 10px; }
+</style>
+</head>
+<body>
+<div>
+  <table id="formTable" border="1">
+    <tr>
+      <th>Zutat</th>
+      <th>Menge</th>
+      <th>Einheit</th>
+    </tr>
+    <tr>
+      <td><input type="text" placeholder="Zutat"></td>
+      <td><input type="number" placeholder="Menge"></td>
+      <td>
+        <select>
+          <option value="ml">ml</option>
+          <option value="l">L</option>
+        </select>
+      </td>
+    </tr>
+  </table>
+  <button type="button" onclick="addRow()">Zutat hinzufügen</button>
+  <br>
+  Zielmenge:
+  <input id="target_amount" type="number" placeholder="">
+  <select id="target_unit">
+     <option value="ml">ml</option>
+     <option value="l">L</option>
+  </select>
+
+  <button type="button" onclick="calculate_to_scale()">Ausrechnen</button>
+  <br>
+  Berechnungswerte:
+  <div id="output">
+    <table id="outputTable">
+      <th>Zutat</th>
+      <th>Menge</th>
+      <th>Einheit</th>
+    </table>
+  </div>
+</div>
+
+
+<script>
+function addRow() {
+  const table = document.getElementById('formTable');
+  const row = table.insertRow();
+  row.insertCell(0).innerHTML = '<input type="text" placeholder="Zutat">';
+  row.insertCell(1).innerHTML = '<input type="number" placeholder="Anzahl">';
+  row.insertCell(2).innerHTML = `
+    <select>
+      <option value="ml">ml</option>
+      <option value="l">L</option>
+    </select>
+  `;
+}
+
+function calculate_to_scale() {
+  const table = document.getElementById('formTable');
+  const data = [];
+  
+  //constants so I know what I'm doing
+  const INGREDIENT = 0;
+  const AMOUNT = 1;
+  const UNIT = 2;
+
+  for (let i = 1; i < table.rows.length; i++){
+     const row = table.rows[i]
+     const ingredient = row.cells[INGREDIENT].querySelector('input').value;
+     const amount = row.cells[AMOUNT].querySelector('input').value;
+     const unit = row.cells[UNIT].querySelector('select').value;
+     data.push({ ingredient, amount, unit });
+  }
+
+  let target_amount = Number(document.getElementById('target_amount').value);
+  const target_unit = document.getElementById('target_unit').value;
+
+  console.log(data)
+
+  if (target_amount === 0){
+    document.getElementById('output').innerText = "0 als Zielwert ist nicht zulässig!";
+    return 0;
+  }
+  let total_ingredients = 0;
+  let ratio = 0;
+  
+  if (target_unit === 'l'){
+    target_amount = target_amount * 1000; //covert to ml
+  }
+  data.forEach(item =>{
+    if (item.amount === 0 || item.ingredient === ""){
+      return;
+    }
+    if (item.unit === 'l'){
+      item.amount = item.amount * 1000;
+      item.unit = 'ml';
+    }
+    total_ingredients = total_ingredients + item.amount;
+  });
+  
+  //find the ratio
+  ratio = target_amount / total_ingredients;
+  console.log("Ratio:" + ratio)
+
+  // let's calculate to new values
+  const output_array = [];
+  data.forEach(item =>{
+    const o_ingredient = item.ingredient;
+    const o_amount = Math.round(item.amount * ratio);
+    const o_unit = 'ml';
+    output_array.push({ o_ingredient, o_amount, o_unit });
+  })
+  
+  console.log(output_array)
+
+  const output_table = document.getElementById('outputTable');
+  output_table.border = 1;
+
+  while (output_table.rows.length > 1) {
+    output_table.deleteRow(1);
+  }
+
+  // Inhalte
+  output_array.forEach(row => {
+    const tr = output_table.insertRow();
+    tr.insertCell(0).innerText = row.o_ingredient;
+    tr.insertCell(1).innerText = row.o_amount;
+    tr.insertCell(2).innerText = row.o_unit;
+  });
+}
+</script>
+</body>
+</html>
+
