@@ -85,12 +85,11 @@ function calculate_to_scale() {
   let target_amount = Math.abs(Number(document.getElementById('target_amount').value));
   const target_unit = document.getElementById('target_unit').value;
 
-  console.log(data)
+  //if (target_amount === 0){
+  //  document.getElementById('output').innerText = "0 als Zielwert ist nicht zulässig!";
+  //  return 0;
+  //}
 
-  if (target_amount === 0){
-    document.getElementById('output').innerText = "0 als Zielwert ist nicht zulässig!";
-    return 0;
-  }
   let total_ingredients = 0;
   let ratio = 0;
   
@@ -110,7 +109,6 @@ function calculate_to_scale() {
   
   //find the ratio
   ratio = target_amount / total_ingredients;
-  console.log("Ratio:" + ratio)
 
   // let's calculate to new values
   const output_array = [];
@@ -120,8 +118,6 @@ function calculate_to_scale() {
     const o_unit = 'ml';
     output_array.push({ o_ingredient, o_amount, o_unit });
   })
-  
-  console.log(output_array)
 
   const output_table = document.getElementById('outputTable');
   output_table.border = 1;
