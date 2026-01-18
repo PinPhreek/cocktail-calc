@@ -77,12 +77,12 @@ function calculate_to_scale() {
   for (let i = 1; i < table.rows.length; i++){
      const row = table.rows[i]
      const ingredient = row.cells[INGREDIENT].querySelector('input').value;
-     const amount = Number(row.cells[AMOUNT].querySelector('input').value);
+     const amount = Math.abs(Number(row.cells[AMOUNT].querySelector('input').value));
      const unit = row.cells[UNIT].querySelector('select').value;
      data.push({ ingredient, amount, unit });
   }
 
-  let target_amount = Number(document.getElementById('target_amount').value);
+  let target_amount = Math.abs(Number(document.getElementById('target_amount').value));
   const target_unit = document.getElementById('target_unit').value;
 
   console.log(data)
