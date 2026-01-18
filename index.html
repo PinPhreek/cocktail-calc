@@ -77,7 +77,7 @@ function calculate_to_scale() {
   for (let i = 1; i < table.rows.length; i++){
      const row = table.rows[i]
      const ingredient = row.cells[INGREDIENT].querySelector('input').value;
-     const amount = row.cells[AMOUNT].querySelector('input').value;
+     const amount = Number(row.cells[AMOUNT].querySelector('input').value);
      const unit = row.cells[UNIT].querySelector('select').value;
      data.push({ ingredient, amount, unit });
   }
@@ -105,7 +105,7 @@ function calculate_to_scale() {
       item.amount = item.amount * 1000;
       item.unit = 'ml';
     }
-    total_ingredients = total_ingredients + item.amount;
+    total_ingredients += item.amount;
   });
   
   //find the ratio
